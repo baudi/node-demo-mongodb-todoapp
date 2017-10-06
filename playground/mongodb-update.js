@@ -15,7 +15,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
 
 	// db.collection('Users').findOneAndUpdate(
 	// 	{_id: new ObjectID('59b9d07c5b681724f8ccbc79')},
-	// 	{$set: {name: 'Nicol', lastname: 'Lora', age: 35, location: 'Cercado', status: 'single'}},
+	// 	{$set: {name: 'Nicol', lastName: 'Lora', age: 35, location: 'Cercado', status: 'single'}},
 	// 	{returnOriginal: false}).then((result)=>{
 	// 		console.log(result);
 	// 	});

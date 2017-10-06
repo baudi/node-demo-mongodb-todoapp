@@ -7,7 +7,7 @@ var User = mongoose.model('User', {
 		minLength: 1,
 		trim: true
 	},
-	lastname: {
+	lastName: {
 		type: String,
 		required: true,
 		minLength: 1,

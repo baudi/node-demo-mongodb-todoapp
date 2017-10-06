@@ -1,18 +1,20 @@
 const {ObjectID} = require('mongodb');
-// Libraries Import
-var express = require('express');
-var bodyParser = require('body-parser');
-// Local import
-var {mongoose} = require('./db/mongoose');
-var {Todo} = require('./models/todo');
-var {User} = require('./models/user');
 
-var app = express();
-var port = process.env.PORT || 3000;
+// Libraries Import
+const express = require('express');
+const bodyParser = require('body-parser');
+
+// Local import
+const {mongoose} = require('./db/mongoose');
+let {Todo} = require('./models/todo');
+let {User} = require('./models/user');
+
+const app = express();
+const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.post('/todos', (req, res) => {
-	var todo = new Todo({
+	let todo = new Todo({
 		text: req.body.text
 	});
 
@@ -34,7 +36,7 @@ app.get('/todos', (req, res) => {
 
 // GET /todos/12343
 app.get('/todos/:id', (req, res) => {
-	var id = req.params.id;
+	let id = req.params.id;
 
 	if (!ObjectID.isValid(id)) {
 		return res.status(400).send();
