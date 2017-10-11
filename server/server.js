@@ -1,9 +1,9 @@
-const {ObjectID} = require('mongodb');
+
 
 // Libraries Import
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const {ObjectID} = require('mongodb');
 // Local import
 const {mongoose} = require('./db/mongoose');
 let {Todo} = require('./models/todo');
@@ -48,6 +48,29 @@ app.get('/todos/:id', (req, res) => {
 		}
 		res.send({todo});
 	}).catch((e)=>{
+		res.status(400).send();
+	});
+});
+// DELETE /todos/:id
+app.delete('/todos/:id', (req, res) => {
+	// Get the id
+	let id = req.params.id;
+	// validate the id -> not valid? return 404
+	if (!ObjectID.isValid(id)) {
+		return res.status(404).send();
+	}
+	// remove todo by id
+	Todo.findByIdAndRemove(id).then((todo) => {
+		if (!todo) {
+			// if no doc, send 404
+			return res.status(404).send();
+		}
+		// if doc, send doc back with 200
+		res.status(200);
+		res.send({todo});
+	}).catch((e) => {
+		// error
+		// 400 with empty body
 		res.status(400).send();
 	});
 });
