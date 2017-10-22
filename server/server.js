@@ -27,7 +27,6 @@ app.post('/todos', (req, res) => {
 
 app.get('/todos', (req, res) => {
 	Todo.find().then((todos) => {
-		console.log(todos);
 		res.send({todos});
 	}, (e)=>{
 		res.status(400).send(e);
@@ -74,12 +73,11 @@ app.delete('/todos/:id', (req, res) => {
 		res.status(400).send();
 	});
 });
-
 // UPDATE /todos/:id
 app.patch('/todos/:id', (req, res) => {
 	let id = req.params.id;
 	let body = _.pick(req.body, ['text', 'completed']);
-	console.log(req.body);
+
 	if (!ObjectID.isValid(id)) {
 		return res.status(404).send();
 	}
@@ -90,7 +88,7 @@ app.patch('/todos/:id', (req, res) => {
 		body.completed = false;
 		body.completedAt = null;
 	}
-	 Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+	Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
 	 	if (!todo) {
 	 		return res.status(404).send();
 	 	}
