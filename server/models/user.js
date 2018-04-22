@@ -33,7 +33,7 @@ let UserSchema = mongoose.Schema({
 			required: true
 		}
 	}]
-});
+}, {usePushEach:true});
 
 UserSchema.methods.toJSON = function() {
 	let user = this;
