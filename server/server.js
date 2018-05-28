@@ -5,7 +5,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 // Local import
-const {mongoose} = require('./db/mongoose');
 let {Todo} = require('./models/todo');
 let {User} = require('./models/user');
 let {authenticate} = require('./middleware/authenticate');
@@ -14,9 +13,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 // POST /todos
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
 	let todo = new Todo({
-		text: req.body.text
+		text: req.body.text,
+		description: req.body.description,
+		_creator: req.user._id
 	});
 
 	todo.save().then((doc) => {
@@ -26,8 +27,10 @@ app.post('/todos', (req, res) => {
 	});
 });
 // GET /todos
-app.get('/todos', (req, res) => {
-	Todo.find().then((todos) => {
+app.get('/todos', authenticate, (req, res) => {
+	Todo.find({
+		_creator: req.user._id
+	}).then((todos) => {
 		res.send({todos});
 	}, (e)=>{
 		res.status(400).send(e);
@@ -47,7 +50,7 @@ app.get('/todos/:id', (req, res) => {
 		}
 		res.send({todo});
 	}).catch((e)=>{
-		res.status(400).send();
+		res.status(400).send(e);
 	});
 });
 // DELETE /todos/:id
@@ -70,7 +73,7 @@ app.delete('/todos/:id', (req, res) => {
 	}).catch((e) => {
 		// error
 		// 400 with empty body
-		res.status(400).send();
+		res.status(400).send(e);
 	});
 });
 // UPDATE /todos/:id
@@ -94,8 +97,14 @@ app.patch('/todos/:id', (req, res) => {
 	 	}
 	 	res.send({todo});
 	 }).catch((e) => {
-	 	res.status(400).send();
+	 	res.status(400).send(e);
 	 });
+});
+// GET /users
+app.get('/users', (req, res) => {
+	User.find().then((users) => {
+		res.send({users});
+	}, (e) => {res.status(400).send(e);});
 });
 // POST /users
 app.post('/users', (req, res) => {
@@ -132,7 +141,7 @@ app.post('/users/login', (req, res) => {
 		});
 	})
 	.catch((e) => {
-		res.status(400).send();
+		res.status(400).send(e);
 	});
 });
 
