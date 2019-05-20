@@ -47,16 +47,20 @@ UserSchema.methods.generateAuthToken = function () {
 	let access = 'auth';
 	let token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
 
-	user.tokens.push({access, token});
+	if (user.tokens.length > 0) {
+		user.tokens[0].token = token;
+	}else {
+		user.tokens.push({access, token});
+	}
 
-	return user.save().then(() => {
+	return user.save().then(()=>{
 		return token;
 	});
 };
 
 UserSchema.methods.removeToken = function (token) {
 	let user = this;
-	return user.update({ 
+	return user.update({
 		$pull: {
 			tokens: {
 				token: { token: token }
@@ -66,7 +70,7 @@ UserSchema.methods.removeToken = function (token) {
 };
 
 UserSchema.statics.findByToken = function (token) {
-	let User = this;
+	let user = this;
 	let decoded;
 
 	try {
@@ -76,7 +80,7 @@ UserSchema.statics.findByToken = function (token) {
 			reject();
 		});
 	}
-	return User.findOne({
+	return user.findOne({
 		'_id': decoded._id,
 		'tokens.token': token,
 		'tokens.access': 'auth'
@@ -84,7 +88,7 @@ UserSchema.statics.findByToken = function (token) {
 };
 
 UserSchema.statics.findByCredentials = function (email, password) {
-	let user = this;
+	let User = this;
 
 	return User.findOne({email})
 	.then((user) => {
